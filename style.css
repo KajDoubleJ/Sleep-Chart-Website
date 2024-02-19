@@ -1,0 +1,66 @@
+.content {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.day {
+    /* background-color: pink; */
+    width: 1100px;
+    height: 100px;
+    position: relative;
+}
+
+.day_number {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin-right: 100px;
+}
+
+.bar {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    
+    border: 1px solid black;
+    width: 720px;
+    height: 40px;
+    margin: auto;
+}
+
+.sleep {
+    background-color: blue;
+    width: 240px;
+    height: 40px;
+    margin-left: 360px;
+}
+
+.left_hour {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin-left: 150px;
+} 
+
+.right_hour {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin-left: 920px;
+}
+
+.sleep_hour {
+    position: absolute;
+    top: -40px;
+}
