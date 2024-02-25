@@ -10,14 +10,18 @@
 <body>
     <div class="content">
         <?php
-            $start_row = 1;
+            $stats = array();
             if (($csv_file = fopen("sleep_data.csv", "r")) !== FALSE) { 
-                while (($read_data = fgetcsv($csv_file, 1000, ";")) !== FALSE) {
-                    $column_count = count($read_data);
-                    $start_row++;
-                    for ($c=0; $c < $column_count; $c++) {
-                        echo $read_data[$c];
+                while (($stats = fgetcsv($csv_file, null, ";")) !== FALSE) {
+                    $column_count = count($stats);
+                    for ($column=0; $column < $column_count; $column++) {
+                        if($stats[$column] == null) {
+                            echo '00:00';
+                        }
+                        echo $stats[$column];
+                        echo '&nbsp&nbsp';
                     }
+                    echo '<br>';
                 }
                 fclose($csv_file);
             }
