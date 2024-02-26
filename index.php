@@ -1,3 +1,16 @@
+<?php
+    function get_data_from_file() {
+        $sleep_data = array();
+        if (($csv_file = fopen("sleep_data.csv", "r")) !== FALSE) { 
+            while (($stats = fgetcsv($csv_file, null, ";")) !== FALSE) {
+                $sleep_data[] = $stats;
+            }
+            fclose($csv_file);
+        }     
+        return $sleep_data;
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -10,21 +23,7 @@
 <body>
     <div class="content">
         <?php
-            $stats = array();
-            if (($csv_file = fopen("sleep_data.csv", "r")) !== FALSE) { 
-                while (($stats = fgetcsv($csv_file, null, ";")) !== FALSE) {
-                    $column_count = count($stats);
-                    for ($column=0; $column < $column_count; $column++) {
-                        if($stats[$column] == null) {
-                            echo '00:00';
-                        }
-                        echo $stats[$column];
-                        echo '&nbsp&nbsp';
-                    }
-                    echo '<br>';
-                }
-                fclose($csv_file);
-            }
+            $stats = get_data_from_file();
         ?>
         <!-- <div class="day">
             <span class="day_number">2023.10.16</span>
