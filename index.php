@@ -18,10 +18,32 @@
 
     function is_validate_hours($from_1, $to_1, $from_2, $to_2, $from_3, $to_3) {
         $format = 'H:i';
-        $time = strtotime($time_str);
-        if ($time !== false && date($format, $time) == $time_str) {
-            
+        $time = strtotime($from_1);
+        if ($time === false || date($format, $time) != $from_1) {
+            return false;
         }
+        $time = strtotime($to_1);
+        if ($time === false || date($format, $time) != $to_1) {
+            return false;
+        }
+        $time = strtotime($from_2);
+        if ($time === false || date($format, $time) != $from_2) {
+            return false;
+        }
+        $time = strtotime($to_2);
+        if ($time === false || date($format, $time) != $to_2) {
+            return false;
+        }
+        $time = strtotime($from_3);
+        if ($time === false || date($format, $time) != $from_3) {
+            return false;
+        }
+        $time = strtotime($to_3);
+        if ($time === false || date($format, $time) != $to_3) {
+            return false;
+        }
+        
+        return true;
     }
 
     function is_valid_sleep_data($sleep_data) {
