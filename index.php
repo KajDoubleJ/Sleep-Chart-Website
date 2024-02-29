@@ -1,13 +1,22 @@
 <?php
     function get_data_from_file() {
         $sleep_data = array();
-        if (($csv_file = fopen("sleep_data.csv", "r")) !== FALSE) { 
+        if (($csv_file = fopen("test_sleep_data.csv", "r")) !== FALSE) { 
             while (($stats = fgetcsv($csv_file, null, ";")) !== FALSE) {
                 $sleep_data[] = $stats;
             }
             fclose($csv_file);
-        }     
+        }  
         return $sleep_data;
+    }
+
+    function show_array($sleep_data) {
+        for($i = 0; $i < count($sleep_data); $i++) {
+            for($j = 0; $j < count($sleep_data[$i]); $j++) {
+                echo $sleep_data[$i][$j].'&nbsp&nbspd';
+            }
+            echo '<br>';
+        }
     }
 
     function is_valid_date($date_string) {
@@ -42,24 +51,26 @@
         if ($time === false || date($format, $time) != $to_3) {
             return false;
         }
-        
+
         return true;
     }
 
     function is_valid_sleep_data($sleep_data) {
-        if(empty($sleep_data)) {
+        if(empty($sleep_data) || count($sleep_data) == 1) {
             echo "Error! No data or it's empty";
             return false;
         }
-        if($sleep_data[0][0] != "date"   ||
+        if(strpos($sleep_data[0][0], 'date') !== false   /*||
            $sleep_data[0][1] != "from_1" ||
            $sleep_data[0][2] != "to_1"   ||
            $sleep_data[0][3] != "from_2" ||
-           $sleep_data[0][4] != "to_1"   ||
+           $sleep_data[0][4] != "to_2"   ||
            $sleep_data[0][5] != "from_3" ||
-           $sleep_data[0][6] != "to_3"
+           $sleep_data[0][6] != "to_3"*/
         ) {
-            echo 'Error! Wrong header format';
+            echo 'Error! Wrong header format <br>';
+            echo $sleep_data[0][0] . ' : '.gettype($sleep_data[0][0]).'<br>';
+            echo 'date' . ' : '.gettype('date').'<br>';
             return false;
         }
         $row_count = count($sleep_data);
@@ -86,7 +97,9 @@
     <div class="content">
         <?php
             $sleep_data = get_data_from_file();
-            echo is_valid_sleep_data($sleep_data);
+            count($sleep_data[0]);
+            //show_array($sleep_data);
+            is_valid_sleep_data($sleep_data);
         ?>
         <!-- <div class="day">
             <span class="day_number">2023.10.16</span>
