@@ -103,7 +103,7 @@
 <body>
     <div class="content">
         <?php
-            $sleep_data = get_data_from_file();
+            $sleep_data = get_data_from_file(); 
             $sleep_data[0] = remove_utf8_bom($sleep_data[0]);
             //show_array($sleep_data);
             //is_valid_sleep_data($sleep_data);
