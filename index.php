@@ -10,6 +10,13 @@
         return $sleep_data;
     }
 
+    function remove_utf8_bom($text)
+    {
+        $bom = pack('H*','EFBBBF');
+        $text = preg_replace("/^$bom/", '', $text);
+        return $text;
+    }
+
     function show_array($sleep_data) {
         for($i = 0; $i < count($sleep_data); $i++) {
             for($j = 0; $j < count($sleep_data[$i]); $j++) {
@@ -60,7 +67,7 @@
             echo "Error! No data or it's empty";
             return false;
         }
-        if(strpos($sleep_data[0][0], 'date') !== false   /*||
+        if($sleep_data[0][1] != 'date'   /*||
            $sleep_data[0][1] != "from_1" ||
            $sleep_data[0][2] != "to_1"   ||
            $sleep_data[0][3] != "from_2" ||
@@ -97,9 +104,9 @@
     <div class="content">
         <?php
             $sleep_data = get_data_from_file();
-            count($sleep_data[0]);
+            $sleep_data[0] = remove_utf8_bom($sleep_data[0]);
             //show_array($sleep_data);
-            is_valid_sleep_data($sleep_data);
+            //is_valid_sleep_data($sleep_data);
         ?>
         <!-- <div class="day">
             <span class="day_number">2023.10.16</span>
