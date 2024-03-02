@@ -79,12 +79,17 @@
             return false;
         }
         $row_count = count($sleep_data);
-        for($i = 1; $i <= $row_count; $i++) {
+        $compare_date = '1970.01.01';
+        for($i = 1; $i < $row_count; $i++) {
             if(!is_valid_date($sleep_data[$i][0])) {
                 echo 'Error! Wrong date format at row '.$i;
                 return false;
             }
-
+            if ($compare_date > $sleep_data[$i][0]) {
+                echo 'Error! The date at '. ++$i.' row is younger than previous date';
+                return false;
+            }
+            $compare_date = $sleep_data[$i][0];
         }
         return true;
     }
@@ -103,7 +108,7 @@
         <?php
             $sleep_data = get_data_from_file();
             $sleep_data[0] = remove_utf8_bom($sleep_data[0]);
-            //is_valid_sleep_data($sleep_data);
+            is_valid_sleep_data($sleep_data);
         ?>
         <!-- <div class="day">
             <span class="day_number">2023.10.16</span>
