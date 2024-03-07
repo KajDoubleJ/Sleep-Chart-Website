@@ -32,31 +32,30 @@
         return $date && $date->format($format) === $date_string;
     }
 
-    function is_validate_hours($from_1, $to_1, $from_2, $to_2, $from_3, $to_3) {
-        $format = 'H:i';
-        $time = strtotime($from_1);
-        if ($time === false || date($format, $time) != $from_1) {
-            return false;
+    function is_valid_hour_format($time) {
+        if ($time != null) {
+            $format = 'H:i';
+            $new_time = strtotime($time);
+            if ($new_time === false || date($format, $new_time) != $time) {
+                return false;
+            }
         }
-        $time = strtotime($to_1);
-        if ($time === false || date($format, $time) != $to_1) {
-            return false;
+        return true;
+    }
+
+    function is_valid_hours($sleep_data_row) {
+        for($i = 1; $i < 7; $i++) {
+            if (!is_valid_hour_format($sleep_data_row[$i])) {
+                return false;
+            }
         }
-        $time = strtotime($from_2);
-        if ($time === false || date($format, $time) != $from_2) {
-            return false;
-        }
-        $time = strtotime($to_2);
-        if ($time === false || date($format, $time) != $to_2) {
-            return false;
-        }
-        $time = strtotime($from_3);
-        if ($time === false || date($format, $time) != $from_3) {
-            return false;
-        }
-        $time = strtotime($to_3);
-        if ($time === false || date($format, $time) != $to_3) {
-            return false;
+        for($i = 1; $i < 6; $i++) {
+            if ($sleep_data_row[$i] >= $sleep_data_row[$i + 1] && $sleep_data_row[$i + 1] != null) {
+                return false;
+            }
+            if ($i % 2 != 0 && $sleep_data_row[$i] != null && $sleep_data_row[$i + 1] == null) {
+                return false;
+            }
         }
 
         return true;
@@ -81,15 +80,20 @@
         $row_count = count($sleep_data);
         $compare_date = '1970.01.01';
         for($i = 1; $i < $row_count; $i++) {
-            if(!is_valid_date($sleep_data[$i][0])) {
+            if (!is_valid_date($sleep_data[$i][0])) {
                 echo 'Error! Wrong date format at row '.$i;
                 return false;
             }
             if ($compare_date > $sleep_data[$i][0]) {
-                echo 'Error! The date at '. ++$i.' row is younger than previous date';
+                echo 'Error! The date at row '.++$i.' is younger than previous date';
                 return false;
             }
             $compare_date = $sleep_data[$i][0];
+            if (!is_valid_hours($sleep_data[$i])
+            ) {
+                echo 'Error! Hours at row '.++$i.' are not valid';
+                return false;
+            }
         }
         return true;
     }
