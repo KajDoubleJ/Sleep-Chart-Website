@@ -53,7 +53,10 @@
             if ($sleep_data_row[$i] >= $sleep_data_row[$i + 1] && $sleep_data_row[$i + 1] != null) {
                 return false;
             }
-            if ($i % 2 != 0 && $sleep_data_row[$i] != null && $sleep_data_row[$i + 1] == null) {
+            if ($i % 2 != 0 && 
+                ($sleep_data_row[$i] != null && $sleep_data_row[$i + 1] == null) ||
+                ($sleep_data_row[$i] == null && $sleep_data_row[$i + 1] != null)
+            ) {
                 return false;
             }
         }
