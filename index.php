@@ -18,8 +18,8 @@
     }
 
     function show_array($sleep_data) {
-        for($i = 0; $i < count($sleep_data); $i++) {
-            for($j = 0; $j < count($sleep_data[$i]); $j++) {
+        for ($i = 0; $i < count($sleep_data); $i++) {
+            for ($j = 0; $j < count($sleep_data[$i]); $j++) {
                 echo $sleep_data[$i][$j].'&nbsp&nbsp';
             }
             echo '<br>';
@@ -44,12 +44,12 @@
     }
 
     function is_valid_hours($sleep_data_row) {
-        for($i = 1; $i < 7; $i++) {
+        for ($i = 1; $i < 7; $i++) {
             if (!is_valid_hour_format($sleep_data_row[$i])) {
                 return false;
             }
         }
-        for($i = 1; $i < 6; $i++) {
+        for ($i = 1; $i < 6; $i++) {
             if ($sleep_data_row[$i] >= $sleep_data_row[$i + 1] && $sleep_data_row[$i + 1] != null) {
                 return false;
             }
@@ -60,16 +60,15 @@
                 return false;
             }
         }
-
         return true;
     }
 
     function is_valid_sleep_data($sleep_data) {
-        if(empty($sleep_data) || count($sleep_data) == 1) {
+        if (empty($sleep_data) || count($sleep_data) == 1) {
             echo "Error! No data or it's empty";
             return false;
         }
-        if($sleep_data[0][0] != 'date'   ||
+        if ($sleep_data[0][0] != 'date'   ||
            $sleep_data[0][1] != 'from_1' ||
            $sleep_data[0][2] != 'to_1'   ||
            $sleep_data[0][3] != 'from_2' ||
@@ -82,7 +81,7 @@
         }
         $row_count = count($sleep_data);
         $compare_date = '1970.01.01';
-        for($i = 1; $i < $row_count; $i++) {
+        for ($i = 1; $i < $row_count; $i++) {
             if (!is_valid_date($sleep_data[$i][0])) {
                 echo 'Error! Wrong date format at row '.$i;
                 return false;
@@ -100,6 +99,43 @@
         }
         return true;
     }
+
+    function time_difference_to_minutes($time1, $time2) {
+        list($hours, $minutes) = explode(':', $time1);
+        $minutes_time1 = $hours * 60 + $minutes;
+        list($hours, $minutes) = explode(':', $time2);
+        $minutes_time2 = $hours * 60 + $minutes;
+        return abs($minutes_time2 - $minutes_time1);
+    }
+
+    function render_diagram($sleep_data_row) {
+        $MINUTES_PER_PIXEL_RATIO = 2;
+        $BAR_WIDTH = intval(1440 / $MINUTES_PER_PIXEL_RATIO); 
+
+        $date = $sleep_data_row[0];
+        $from_1 = $sleep_data_row[1];
+        $to_1 = $sleep_data_row[2];
+        $from_2 = $sleep_data_row[3];
+        $to_2 = $sleep_data_row[4];
+        $from_3 = $sleep_data_row[5];
+        $to_3 = $sleep_data_row[6];
+
+        $from1_margin_pixels = intval(time_difference_to_minutes('00:00', $from_1) / $MINUTES_PER_PIXEL_RATIO);
+        $sleep1_length_pixels = intval(time_difference_to_minutes($from_1, $to_1) / $MINUTES_PER_PIXEL_RATIO);
+
+        echo '
+            <div class="day">
+                <span class="day_number">'.$date.'</span>
+                <span class="left_hour">0:00</span>
+                <div class="bar" style="width:'.$BAR_WIDTH.'px;">
+                    <div class="sleep" style="margin-left:'.$from1_margin_pixels.'px; width:'.$sleep1_length_pixels.'px;">
+                        <p class="sleep_hour">'.$from_1.'</p>
+                    </div>
+                </div>
+                <span class="right_hour">23:59</span>
+            </div>
+        ';
+    }
 ?>
 
 <!DOCTYPE html>
@@ -115,7 +151,9 @@
         <?php
             $sleep_data = get_data_from_file();
             $sleep_data[0] = remove_utf8_bom($sleep_data[0]);
-            is_valid_sleep_data($sleep_data);
+            if (is_valid_sleep_data($sleep_data)) {
+                render_diagram($sleep_data[1]);
+            }
         ?>
         <!-- <div class="day">
             <span class="day_number">2023.10.16</span>

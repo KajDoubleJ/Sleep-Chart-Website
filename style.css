@@ -30,14 +30,12 @@
     transform: translate(-50%, -50%);
     
     border: 1px solid black;
-    width: 720px;
     height: 40px;
     margin: auto;
 }
 
 .sleep {
     background-color: blue;
-    width: 240px;
     height: 40px;
     margin-left: 360px;
 }
