@@ -68,7 +68,7 @@
             echo "Error! No data or it's empty";
             return false;
         }
-        if ($sleep_data[0][0] != 'date'   ||
+        if ($sleep_data[0][0] != 'date'  ||
            $sleep_data[0][1] != 'from_1' ||
            $sleep_data[0][2] != 'to_1'   ||
            $sleep_data[0][3] != 'from_2' ||
@@ -108,6 +108,14 @@
         return abs($minutes_time2 - $minutes_time1);
     }
 
+    function get_bar_margin_pixels($time, $MINUTES_PER_PIXEL_RATIO) {
+        return intval(time_difference_to_minutes('00:00', $time) / $MINUTES_PER_PIXEL_RATIO);
+    }
+
+    function get_bar_length_pixels($time_from, $time_to, $MINUTES_PER_PIXEL_RATIO) {
+        return intval(time_difference_to_minutes($time_from, $time_to) / $MINUTES_PER_PIXEL_RATIO + 1);
+    }
+
     function render_diagram($sleep_data_row) {
         $MINUTES_PER_PIXEL_RATIO = 2;
         $BAR_WIDTH = intval(1440 / $MINUTES_PER_PIXEL_RATIO); 
@@ -120,17 +128,42 @@
         $from_3 = $sleep_data_row[5];
         $to_3 = $sleep_data_row[6];
 
-        $from1_margin_pixels = intval(time_difference_to_minutes('00:00', $from_1) / $MINUTES_PER_PIXEL_RATIO);
-        $sleep1_length_pixels = intval(time_difference_to_minutes($from_1, $to_1) / $MINUTES_PER_PIXEL_RATIO);
-
         echo '
             <div class="day">
                 <span class="day_number">'.$date.'</span>
                 <span class="left_hour">0:00</span>
                 <div class="bar" style="width:'.$BAR_WIDTH.'px;">
-                    <div class="sleep" style="margin-left:'.$from1_margin_pixels.'px; width:'.$sleep1_length_pixels.'px;">
+        ';
+
+        if ($from_1 != NULL && $to_1 != NULL) {
+            $from1_margin_pixels = get_bar_margin_pixels($from_1, $MINUTES_PER_PIXEL_RATIO);
+            $sleep1_length_pixels = get_bar_length_pixels($from_1, $to_1, $MINUTES_PER_PIXEL_RATIO);
+            echo '
+                    <div class="sleep" style="margin-left:'.$from1_margin_pixels.'px; width:'.$sleep1_length_pixels.'px; float: left;">
                         <p class="sleep_hour">'.$from_1.'</p>
                     </div>
+            ';
+        }
+        if ($from_2 != NULL && $to_2 != NULL) {
+            $from2_margin_pixels = get_bar_margin_pixels($from_2, $MINUTES_PER_PIXEL_RATIO);
+            $sleep2_length_pixels = get_bar_length_pixels($from_2, $to_2, $MINUTES_PER_PIXEL_RATIO);
+            echo '
+                    <div class="sleep" style="margin-left:'.$from2_margin_pixels.'px; width:'.$sleep2_length_pixels.'px; float: left;">
+                        <p class="sleep_hour">'.$from_2.'</p>
+                    </div>
+            ';
+        }
+        if ($from_3 != NULL && $to_3 != NULL) {
+            $from3_margin_pixels = get_bar_margin_pixels($from_3, $MINUTES_PER_PIXEL_RATIO);
+            $sleep3_length_pixels = get_bar_length_pixels($from_3, $to_3, $MINUTES_PER_PIXEL_RATIO);
+            echo '
+                    <div class="sleep" style="margin-left:'.$from3_margin_pixels.'px; width:'.$sleep3_length_pixels.'px;">
+                        <p class="sleep_hour">'.$from_3.'</p>
+                    </div>
+            ';
+        }
+        
+        echo '
                 </div>
                 <span class="right_hour">23:59</span>
             </div>
