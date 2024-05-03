@@ -120,12 +120,24 @@
         return intval(time_difference_to_minutes($time_from, $time_to) / $MINUTES_PER_PIXEL_RATIO + 1);
     }
 
-    function get_sleep_period_html_string($from_margin_pixels, $sleep_length_pixels, $from) {
+    function get_sleep_period_html_string($from_margin_pixels, $sleep_length_pixels, $from, $to) {
+        $SLEEP_HOUR_MARGIN_ALIGNMENT_PIXELS = 17;
         $html_sleep_period_string = '
             <div class="sleep" style="margin-left:'.$from_margin_pixels.'px; width:'.$sleep_length_pixels.'px;">
-                <p class="sleep_hour">'.$from.'</p>
-            </div>
         ';
+        if ($from != '00:00') {
+            $left_sleep_hour_margin_pixels = -$SLEEP_HOUR_MARGIN_ALIGNMENT_PIXELS;
+            $html_sleep_period_string .= '
+                <p class="sleep_hour" style="margin-left:'.$left_sleep_hour_margin_pixels.'px; top: -40px;">'.$from.'</p>
+            ';
+        }
+        if ($to != '23:59') {
+            $right_sleep_hour_margin_pixels = $sleep_length_pixels - $SLEEP_HOUR_MARGIN_ALIGNMENT_PIXELS;
+            $html_sleep_period_string .= '
+                <p class="sleep_hour" style="margin-left:'.$right_sleep_hour_margin_pixels.'px; bottom: -40px;">'.$to.'</p>
+            ';
+        }
+        $html_sleep_period_string .= '</div>';
         return $html_sleep_period_string;
     }
 
@@ -154,13 +166,14 @@
                 $from_margin_pixels[$i], 
                 $sleep_length_pixels[$i], 
                 $from[$i],
+                $to[$i]
             );
         }
 
         echo '
             <div class="day">
                 <span class="day_number">'.$date.'</span>
-                <span class="left_hour">0:00</span>
+                <span class="left_hour">00:00</span>
                 <div class="bar" style="width:'.$BAR_WIDTH.'px;">
                     '.$all_sleep_periods_html_string.'
                 </div>
