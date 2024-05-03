@@ -6,7 +6,6 @@
 }
 
 .day {
-    /* background-color: pink; */
     width: 1100px;
     height: 100px;
     position: relative;
@@ -35,6 +34,7 @@
 }
 
 .sleep {
+    position: absolute;
     background-color: blue;
     height: 40px;
     margin-left: 360px;
