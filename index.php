@@ -116,6 +116,21 @@
         return intval(time_difference_to_minutes($time_from, $time_to) / $MINUTES_PER_PIXEL_RATIO + 1);
     }
 
+    function get_sleep_period_html_string($from_margin_pixels, $sleep_length_pixels, $from, $remaining_sleep_periods_of_day) {
+        $html_sleep_period_string = '
+            <div class="sleep" style="margin-left:'.$from_margin_pixels.'px; width:'.$sleep_length_pixels.'px;
+        ';
+        if ($remaining_sleep_periods_of_day > 0) {
+            $html_sleep_period_string .= 'float: left;';
+        }
+        $html_sleep_period_string .= '
+            ">
+                <p class="sleep_hour">'.$from.'</p>
+            </div>
+        ';
+        return $html_sleep_period_string;
+    }
+
     function render_diagram($sleep_data_row) {
         $MINUTES_PER_PIXEL_RATIO = 2;
         $BAR_WIDTH = intval(1440 / $MINUTES_PER_PIXEL_RATIO); 
@@ -135,34 +150,54 @@
                 <div class="bar" style="width:'.$BAR_WIDTH.'px;">
         ';
 
+        $sleep_periods_amount = 0;
+        $all_sleep_periods_html_string = '';
+
         if ($from_1 != NULL && $to_1 != NULL) {
             $from1_margin_pixels = get_bar_margin_pixels($from_1, $MINUTES_PER_PIXEL_RATIO);
             $sleep1_length_pixels = get_bar_length_pixels($from_1, $to_1, $MINUTES_PER_PIXEL_RATIO);
-            echo '
-                    <div class="sleep" style="margin-left:'.$from1_margin_pixels.'px; width:'.$sleep1_length_pixels.'px; float: left;">
-                        <p class="sleep_hour">'.$from_1.'</p>
-                    </div>
-            ';
+            $sleep_periods_amount++;
         }
         if ($from_2 != NULL && $to_2 != NULL) {
             $from2_margin_pixels = get_bar_margin_pixels($from_2, $MINUTES_PER_PIXEL_RATIO);
             $sleep2_length_pixels = get_bar_length_pixels($from_2, $to_2, $MINUTES_PER_PIXEL_RATIO);
-            echo '
-                    <div class="sleep" style="margin-left:'.$from2_margin_pixels.'px; width:'.$sleep2_length_pixels.'px; float: left;">
-                        <p class="sleep_hour">'.$from_2.'</p>
-                    </div>
-            ';
+            $sleep_periods_amount++;
         }
         if ($from_3 != NULL && $to_3 != NULL) {
             $from3_margin_pixels = get_bar_margin_pixels($from_3, $MINUTES_PER_PIXEL_RATIO);
             $sleep3_length_pixels = get_bar_length_pixels($from_3, $to_3, $MINUTES_PER_PIXEL_RATIO);
-            echo '
-                    <div class="sleep" style="margin-left:'.$from3_margin_pixels.'px; width:'.$sleep3_length_pixels.'px;">
-                        <p class="sleep_hour">'.$from_3.'</p>
-                    </div>
-            ';
+            $sleep_periods_amount++;
+        }
+
+        if ($sleep_periods_amount > 0) {
+            $sleep_periods_amount--;
+            $all_sleep_periods_html_string .= get_sleep_period_html_string(
+                $from1_margin_pixels, 
+                $sleep1_length_pixels, 
+                $from_1, 
+                $sleep_periods_amount
+            );
+        }
+        if ($sleep_periods_amount > 0) {
+            $sleep_periods_amount--;
+            $all_sleep_periods_html_string .= get_sleep_period_html_string(
+                $from2_margin_pixels, 
+                $sleep2_length_pixels, 
+                $from_2, 
+                $sleep_periods_amount
+            );
+        }
+        if ($sleep_periods_amount > 0) {
+            $sleep_periods_amount--;
+            $all_sleep_periods_html_string .= get_sleep_period_html_string(
+                $from3_margin_pixels, 
+                $sleep3_length_pixels, 
+                $from_3, 
+                $sleep_periods_amount
+            );
         }
         
+        echo $all_sleep_periods_html_string;
         echo '
                 </div>
                 <span class="right_hour">23:59</span>
