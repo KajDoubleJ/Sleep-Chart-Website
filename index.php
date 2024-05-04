@@ -10,11 +10,15 @@
         return $sleep_data;
     }
 
-    function remove_utf8_bom($text)
-    {
+    function remove_utf8_bom($text) {
         $bom = pack('H*','EFBBBF');
         $text = preg_replace("/^$bom/", '', $text);
         return $text;
+    }
+
+    function clear_data($sleep_data) {
+        $sleep_data[0] = remove_utf8_bom($sleep_data[0]);
+        return $sleep_data;
     }
 
     function show_array($sleep_data) {
@@ -190,6 +194,12 @@
             </div>
         ';
     }
+
+    function show_data($sleep_data) {
+        for ($i = 1; $i < count($sleep_data); $i++) {
+            render_diagram($sleep_data[$i]);
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -204,10 +214,8 @@
     <div class="content">
         <?php
             $sleep_data = get_data_from_file();
-            $sleep_data[0] = remove_utf8_bom($sleep_data[0]);
-            if (is_valid_sleep_data($sleep_data)) {
-                render_diagram($sleep_data[1]);
-            }
+            $sleep_data = clear_data($sleep_data);
+            show_data($sleep_data);
         ?>
     </div>
 </body>
