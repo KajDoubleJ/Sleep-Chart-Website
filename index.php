@@ -163,6 +163,15 @@
         return $html_sleep_period_string;
     }
 
+    function extra_minutes_in_case_the_time_changes($date) {
+        # Due to lack of enough data extra hour has to be checked one by one 'manualy'
+        # To automate process apart from hour periods should be also added irrefutable sleep length 
+        if($date == "2023.10.29") {
+            return 60;
+        }
+        return 0;
+    }
+
     function render_diagram($sleep_data_row) {
         $MINUTES_PER_PIXEL_RATIO = 2;
         $BAR_WIDTH = intval(1440 / $MINUTES_PER_PIXEL_RATIO); 
@@ -195,8 +204,9 @@
             );
         }
 
+        $total_sleep_minutes_of_day += extra_minutes_in_case_the_time_changes($date);
         $total_time_of_day = total_minutes_to_time_format($total_sleep_minutes_of_day);
-
+        
         echo '
             <div class="day">
                 <span class="day_number">'.$date.'</span>
