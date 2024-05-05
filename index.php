@@ -1,7 +1,7 @@
 <?php
     function get_data_from_file() {
         $sleep_data = array();
-        if (($csv_file = fopen("test_sleep_data.csv", "r")) !== FALSE) { 
+        if (($csv_file = fopen("sleep_data.csv", "r")) !== FALSE) { 
             while (($stats = fgetcsv($csv_file, null, ";")) !== FALSE) {
                 $sleep_data[] = $stats;
             }
