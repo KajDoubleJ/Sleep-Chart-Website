@@ -116,12 +116,21 @@
         return abs($minutes_time2 - $minutes_time1);
     }
 
+    function total_minutes_to_time_format($total_minutes) {
+        $hours = (int)($total_minutes / 60);
+        $minutes = $total_minutes % 60;
+        $time_string = "";
+        $time_string .= $hours . "h ";
+        $time_string .= $minutes. "min";
+        return $time_string;
+    }
+
     function get_bar_margin_pixels($time, $MINUTES_PER_PIXEL_RATIO) {
         return intval(time_difference_to_minutes('00:00', $time) / $MINUTES_PER_PIXEL_RATIO);
     }
 
-    function get_bar_length_pixels($time_from, $time_to, $MINUTES_PER_PIXEL_RATIO) {
-        return intval(time_difference_to_minutes($time_from, $time_to) / $MINUTES_PER_PIXEL_RATIO + 1);
+    function get_bar_length_pixels($sleep_time_minutes, $MINUTES_PER_PIXEL_RATIO) {
+        return intval($sleep_time_minutes / $MINUTES_PER_PIXEL_RATIO + 1);
     }
 
     function get_sleep_period_html_string($from_margin_pixels, $sleep_length_pixels, $from, $to) {
@@ -161,14 +170,17 @@
         $date = $sleep_data_row[0];
         $from = array($sleep_data_row[1], $sleep_data_row[3], $sleep_data_row[5]);
         $to = array($sleep_data_row[2], $sleep_data_row[4], $sleep_data_row[6]);
+        $total_sleep_minutes_of_day = 0;
 
         $from_margin_pixels = array();
         $sleep_length_pixels = array();
 
         for ($i = 0; $i < 3; $i++) {
             if ($from[$i] != NULL && $to[$i] != NULL) {
+                $sleep_time_minutes = time_difference_to_minutes($from[$i], $to[$i]);
                 $from_margin_pixels[] = get_bar_margin_pixels($from[$i], $MINUTES_PER_PIXEL_RATIO);
-                $sleep_length_pixels[] = get_bar_length_pixels($from[$i], $to[$i], $MINUTES_PER_PIXEL_RATIO);
+                $sleep_length_pixels[] = get_bar_length_pixels($sleep_time_minutes, $MINUTES_PER_PIXEL_RATIO);
+                $total_sleep_minutes_of_day += $sleep_time_minutes;
             }
         }
 
@@ -183,6 +195,8 @@
             );
         }
 
+        $total_time_of_day = total_minutes_to_time_format($total_sleep_minutes_of_day);
+
         echo '
             <div class="day">
                 <span class="day_number">'.$date.'</span>
@@ -191,6 +205,7 @@
                     '.$all_sleep_periods_html_string.'
                 </div>
                 <span class="right_hour">23:59</span>
+                <span class="total_time">'.$total_time_of_day.'</span>
             </div>
         ';
     }
@@ -215,7 +230,9 @@
         <?php
             $sleep_data = get_data_from_file();
             $sleep_data = clear_data($sleep_data);
-            show_data($sleep_data);
+            if(is_valid_sleep_data($sleep_data)) {
+                show_data($sleep_data);
+            }
         ?>
     </div>
 </body>
