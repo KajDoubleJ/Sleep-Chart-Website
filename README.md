@@ -1,3 +1,3 @@
 # Sleep-Chart-Website
 
-Work in progress... .
+Visualization of sleep periods for medical data
